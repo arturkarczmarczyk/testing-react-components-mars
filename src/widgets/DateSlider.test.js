@@ -1,7 +1,7 @@
 import React from "react";
 import DateSlider from "./DateSlider";
-import {render} from "@testing-library/react";
-import {dateToSol} from "../services/sols";
+import {fireEvent, render} from "@testing-library/react";
+import {dateToSol, solToDate} from "../services/sols";
 
 describe('DateSlider', () => {
     describe('render', () => {
@@ -28,6 +28,21 @@ describe('DateSlider', () => {
 
             const input = getByTestId('date-slider');
             expect(input).toHaveValue(dateToSol('2017-05-03').toString());
+        });
+    });
+
+    describe('change', () => {
+        it('should publish the selected date', () => {
+            const fn = jest.fn();
+            const {getByTestId} = render(
+                <DateSlider earth_date={'2017-05-13'} onDateChanged={fn} />
+            );
+
+            const input = getByTestId('date-slider');
+            fireEvent.change(input, {target: {value: '3877'}});
+            expect(fn.mock.calls).toEqual([
+                [solToDate(3877)]
+            ]);
         });
     });
 });
